@@ -59,6 +59,11 @@
   color: #FFFFFF; /* Light text */
 }
 
+.day:hover {
+  cursor: pointer;
+  background-color: #3370ff; /* Lighter red background on hover */
+}
+
 .day:nth-child(7n) {
   border-right: none; /* Remove right border for last cell in each row */
 }

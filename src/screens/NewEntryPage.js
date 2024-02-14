@@ -1,12 +1,32 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { addJournalEntry } from '../reducers/journalSlice';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // Import useLocation
 import './NewEntryPage.styles.css'; // Import external stylesheet
 
 const NewEntryPage = ({ addJournalEntry }) => {
+  const location = useLocation(); // Initialize useLocation hook to access location object
+
+  // Function to format a Date object to "YYYY-MM-DDTHH:MM"
+  const formatDateToDateTimeLocal = (inputDate) => {
+    // Create a new Date object from the input date
+    const date = new Date(inputDate);
+
+    // Adjust for time zone
+    const userTimezoneOffset = date.getTimezoneOffset() * 60000; // Offset in milliseconds
+    const adjustedDate = new Date(date.getTime() + userTimezoneOffset); // Add offset for time zones ahead of UTC
+
+    // Format the adjusted date to "YYYY-MM-DDTHH:MM"
+    return `${adjustedDate.getFullYear()}-${String(adjustedDate.getMonth() + 1).padStart(2, '0')}-${String(adjustedDate.getDate()).padStart(2, '0')}T00:00`;
+  };
+
+  // Check if there's a date passed in location state and initialize dateTime with it
+  const initialDateTime = location.state?.date
+    ? formatDateToDateTimeLocal(new Date(location.state.date))
+    : new Date().toISOString().slice(0, 16); // format: YYYY-MM-DDTHH:MM
+
   const [title, setTitle] = useState('');
-  const [dateTime, setDateTime] = useState(new Date().toISOString().slice(0, 16)); // format: YYYY-MM-DDTHH:MM
+  const [dateTime, setDateTime] = useState(initialDateTime);
   const [body, setBody] = useState('');
 
   const handleTitleChange = (e) => {

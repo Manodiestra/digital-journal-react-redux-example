@@ -1,11 +1,12 @@
-// CalendarPage.js
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { getJournalEntries } from '../reducers/journalSlice';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate instead of useHistory
 import './CalendarPage.styles.css'; // Import external stylesheet
 
 const CalendarPage = ({ entries, getEntries }) => {
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
   useEffect(() => {
     getEntries();
   }, [getEntries]);
@@ -25,6 +26,12 @@ const CalendarPage = ({ entries, getEntries }) => {
 
   // Array to store journal entry dates
   const journalEntryDates = entries.map(entry => new Date(entry.dateTime).getDate());
+
+  // Handle grid item click
+  const handleGridItemClick = (day) => {
+    const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    navigate('/new-entry', { state: { date: formattedDate } }); // Pass date in state object
+  };
 
   // Generate calendar grid
   const calendarGrid = [];
@@ -77,7 +84,11 @@ const CalendarPage = ({ entries, getEntries }) => {
         {calendarGrid.map((week, index) => (
           <div key={index} className="week">
             {week.map((day, idx) => (
-              <div key={idx} className={`day ${day && day.hasJournalEntry ? 'has-entry' : ''}`}>
+              <div
+                key={idx}
+                className={`day ${day && day.hasJournalEntry ? 'has-entry' : ''}`}
+                onClick={() => handleGridItemClick(day && day.day)}
+              >
                 {day && day.day}
               </div>
             ))}
