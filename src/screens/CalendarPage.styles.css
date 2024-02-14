@@ -1,0 +1,68 @@
+/* CalendarPage.styles.css */
+
+.container {
+  width: 100%;
+  height: 100vh;
+  max-width: 600px; /* Limiting the maximum width for centering */
+  margin: 0 auto; /* Center horizontally */
+  padding: 20px;
+  background-color: #263238; /* Dark midnight blue background */
+  color: #FFFFFF; /* Light text */
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between; /* Horizontal alignment */
+  margin-bottom: 20px;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #1a237e; /* Darker blue background */
+  color: #FFFFFF; /* Light text */
+  border: 1px solid #FFFFFF; /* White border */
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #263238; /* Darken on hover */
+}
+
+.calendar {
+  border: 1px solid #FFFFFF; /* White border */
+}
+
+.header {
+  display: flex;
+  justify-content: space-around;
+  font-weight: bold;
+  background-color: #1a237e; /* Darker blue background */
+  color: #FFFFFF; /* Light text */
+  padding: 8px;
+}
+
+.week {
+  display: flex;
+  flex-wrap: wrap;
+  border-top: 1px solid #FFFFFF; /* White border */
+}
+
+.day {
+  flex: 1;
+  border-right: 1px solid #FFFFFF; /* White border */
+  border-bottom: 1px solid #FFFFFF; /* White border */
+  padding: 8px;
+  text-align: center;
+  background-color: #1a237e; /* Darker blue background */
+  color: #FFFFFF; /* Light text */
+}
+
+.day:nth-child(7n) {
+  border-right: none; /* Remove right border for last cell in each row */
+}
+
+.has-entry {
+  background-color: #FF5733; /* Red background */
+}

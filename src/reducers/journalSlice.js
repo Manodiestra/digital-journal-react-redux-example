@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { v4 as uuidv4 } from 'uuid';
 
 const initialState = {
-  entries: [],
+  entries: []
 };
 
 const journalSlice = createSlice({
@@ -9,7 +10,11 @@ const journalSlice = createSlice({
   initialState,
   reducers: {
     addJournalEntry: (state, action) => {
-      state.entries.push(action.payload);
+      const newEntry = {
+        id: uuidv4(), // Generate a UUID
+        ...action.payload
+      };
+      state.entries.push(newEntry);
     },
     getJournalEntries: (state) => {
       return state;
