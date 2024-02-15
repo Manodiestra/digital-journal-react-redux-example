@@ -14,6 +14,7 @@ const JournalListPage = ({ entries, getEntries }) => {
     <div className="container">
       <h1>Journal Entries</h1>
       <div className="navigation">
+        <Link to="/" className="button">Go to List View</Link>
         <Link to="/calendar" className="button">Go to Calendar</Link>
         <Link to="/new-entry" className="button">Go to New Entry</Link>
       </div>

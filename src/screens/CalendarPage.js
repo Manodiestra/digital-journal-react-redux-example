@@ -69,6 +69,7 @@ const CalendarPage = ({ entries, getEntries }) => {
       <h1>Calendar</h1>
       <div className="navigation">
         <Link to="/" className="button">Go to List View</Link>
+        <Link to="/calendar" className="button">Go to Calendar</Link>
         <Link to="/new-entry" className="button">Go to New Entry</Link>
       </div>
       <div className="calendar">

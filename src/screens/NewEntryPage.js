@@ -44,9 +44,9 @@ const NewEntryPage = ({ addJournalEntry }) => {
   const handleSubmit = () => {
     // Call Redux action to add journal entry
     addJournalEntry({
-      title,
-      dateTime,
-      body,
+      title: title,
+      dateTime: dateTime,
+      body: body,
     });
 
     // Reset fields after submission
@@ -61,6 +61,7 @@ const NewEntryPage = ({ addJournalEntry }) => {
       <div className="navigation">
         <Link to="/" className="button">Go to List View</Link>
         <Link to="/calendar" className="button">Go to Calendar</Link>
+        <Link to="/new-entry" className="button">Go to New Entry</Link>
       </div>
       <div className="form-group">
         <label className="label">Title:</label>
