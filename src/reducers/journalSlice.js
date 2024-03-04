@@ -76,6 +76,23 @@ const journalSlice = createSlice({
       state.status = 'failed';
       state.error = action.error.message;
     });
+
+    /**
+     * If you wanted to implement an optimistic updates strategy
+     * you could set up the add and edit reducers like this:
+
+      .addCase(addJournalEntry.fulfilled, (state, action) => {
+        // Assuming the server gives you the complete entry back, including the id
+        state.entries.push(action.payload);
+      })
+      .addCase(editJournalEntry.fulfilled, (state, action) => {
+        const { id, ...updatedEntry } = action.payload;
+        const index = state.entries.findIndex(entry => entry.id === id);
+        if (index !== -1) {
+          state.entries[index] = { ...state.entries[index], ...updatedEntry };
+        }
+      });
+     */
   },
 });
 
