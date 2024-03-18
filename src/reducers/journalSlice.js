@@ -1,14 +1,21 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+const getCsrfToken = () => {
+  // Function to get CSRF token from the cookies
+  const csrfToken = document.cookie.split('; ')
+    .find(row => row.startsWith('csrftoken='))
+    ?.split('=')[1];
+  return csrfToken;
+};
+
 const initialState = {
   entries: [],
   status: 'idle', // 'idle', 'loading', 'succeeded', 'failed'
   error: null
 };
 
-// Async thunk actions
 export const fetchJournalEntries = createAsyncThunk('journal/fetchJournalEntries', async () => {
-  const response = await fetch('/api/journal');
+  const response = await fetch('/api/journal/');
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
@@ -16,10 +23,11 @@ export const fetchJournalEntries = createAsyncThunk('journal/fetchJournalEntries
 });
 
 export const addJournalEntry = createAsyncThunk('journal/addJournalEntry', async (newEntry) => {
-  const response = await fetch('/api/journal', {
+  const response = await fetch('/api/journal/', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCsrfToken(), // Include CSRF token in the request header
     },
     body: JSON.stringify(newEntry) // Removing the client-side ID generation
   });
@@ -30,10 +38,11 @@ export const addJournalEntry = createAsyncThunk('journal/addJournalEntry', async
 });
 
 export const editJournalEntry = createAsyncThunk('journal/editJournalEntry', async ({ id, updatedEntry }) => {
-  const response = await fetch(`/api/journal/${id}`, {
+  const response = await fetch(`/api/journal/${id}/`, {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCsrfToken(), // Include CSRF token in the request header
     },
     body: JSON.stringify(updatedEntry)
   });
