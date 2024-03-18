@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { getJournalEntries } from '../reducers/journalSlice';
+import { fetchJournalEntries } from '../reducers/journalSlice';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate instead of useHistory
 import './CalendarPage.styles.css'; // Import external stylesheet
 
@@ -105,7 +105,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getEntries: () => dispatch(getJournalEntries()),
+  getEntries: () => dispatch(fetchJournalEntries()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CalendarPage);

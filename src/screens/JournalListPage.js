@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { getJournalEntries } from '../reducers/journalSlice';
+import { fetchJournalEntries } from '../reducers/journalSlice';
 import { Link } from 'react-router-dom';
 import JournalEntrySummary from '../components/JournalEntrySummary';
 import './JournalListPage.styles.css'; // Import external stylesheet
@@ -32,7 +32,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getEntries: () => dispatch(getJournalEntries()),
+  getEntries: () => dispatch(fetchJournalEntries()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(JournalListPage);

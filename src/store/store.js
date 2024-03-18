@@ -1,13 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import journalReducer from '../reducers/journalSlice';
-import thunk from 'redux-thunk';
 
 const store = configureStore({
   reducer: {
     journal: journalReducer,
-    // Add other reducers here if needed
+    // Add other slices here if needed
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+  // The middleware field is optional if you're just using the defaults
 });
 
 export default store;
