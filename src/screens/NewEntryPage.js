@@ -27,7 +27,7 @@ const NewEntryPage = ({ addJournalEntry }) => {
 
   const [title, setTitle] = useState('');
   const [dateTime, setDateTime] = useState(initialDateTime);
-  const [body, setBody] = useState('');
+  const [content, setContent] = useState('');
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -37,8 +37,8 @@ const NewEntryPage = ({ addJournalEntry }) => {
     setDateTime(e.target.value);
   };
 
-  const handleBodyChange = (e) => {
-    setBody(e.target.value);
+  const handleContentChange = (e) => {
+    setContent(e.target.value);
   };
 
   const handleSubmit = () => {
@@ -46,13 +46,13 @@ const NewEntryPage = ({ addJournalEntry }) => {
     addJournalEntry({
       title: title,
       dateTime: dateTime,
-      body: body,
+      content: content,
     });
 
     // Reset fields after submission
     setTitle('');
     setDateTime(new Date().toISOString().slice(0, 16));
-    setBody('');
+    setContent('');
   };
 
   return (
@@ -86,8 +86,8 @@ const NewEntryPage = ({ addJournalEntry }) => {
         <label className="label">Journal Entry:</label>
         <textarea
           placeholder="Enter your journal entry here"
-          value={body}
-          onChange={handleBodyChange}
+          value={content}
+          onChange={handleContentChange}
           rows={6}
           className="textarea"
         />
