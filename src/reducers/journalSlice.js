@@ -52,6 +52,19 @@ export const editJournalEntry = createAsyncThunk('journal/editJournalEntry', asy
   return await response.json(); // Assuming your server responds with the updated entry
 });
 
+export const deleteJournalEntry = createAsyncThunk('journal/deleteJournalEntry', async (id) => {
+  const response = await fetch(`/api/journal/${id}/`, {
+    method: 'DELETE',
+    headers: {
+      'X-CSRFToken': getCsrfToken(), // Include CSRF token in the request header
+    }
+  });
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return id; // Return the id of the deleted entry to remove it from the state
+});
+
 const journalSlice = createSlice({
   name: 'journal',
   initialState,
@@ -94,6 +107,17 @@ const journalSlice = createSlice({
         state.status = 'succeeded';
       })
       .addCase(editJournalEntry.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(deleteJournalEntry.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(deleteJournalEntry.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.entries = state.entries.filter(entry => entry.id !== action.payload); // Remove the deleted entry from the state
+      })
+      .addCase(deleteJournalEntry.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
