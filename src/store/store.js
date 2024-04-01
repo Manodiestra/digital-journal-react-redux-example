@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import journalReducer from '../reducers/journalSlice';
+import authReducer from '../reducers/authSlice';
 
 const store = configureStore({
   reducer: {
+    auth: authReducer,
     journal: journalReducer,
-    // Add other slices here if needed
   },
-  // The middleware field is optional if you're just using the defaults
 });
 
 export default store;
