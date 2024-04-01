@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const getCsrfToken = () => {
-  // Function to get CSRF token from the cookies
   const csrfToken = document.cookie.split('; ')
     .find(row => row.startsWith('csrftoken='))
     ?.split('=')[1];
@@ -14,56 +13,81 @@ const initialState = {
   error: null
 };
 
-export const fetchJournalEntries = createAsyncThunk('journal/fetchJournalEntries', async () => {
-  const response = await fetch('/api/journal/');
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return await response.json(); // Assuming your server responds with the list of entries
-});
-
-export const addJournalEntry = createAsyncThunk('journal/addJournalEntry', async (newEntry) => {
-  const response = await fetch('/api/journal/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': getCsrfToken(), // Include CSRF token in the request header
-    },
-    body: JSON.stringify(newEntry) // Removing the client-side ID generation
-  });
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return await response.json(); // Assuming your server responds with the newly added entry
-});
-
-export const editJournalEntry = createAsyncThunk('journal/editJournalEntry', async ({ id, updatedEntry }) => {
-  const response = await fetch(`/api/journal/${id}/`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': getCsrfToken(), // Include CSRF token in the request header
-    },
-    body: JSON.stringify(updatedEntry)
-  });
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return await response.json(); // Assuming your server responds with the updated entry
-});
-
-export const deleteJournalEntry = createAsyncThunk('journal/deleteJournalEntry', async (id) => {
-  const response = await fetch(`/api/journal/${id}/`, {
-    method: 'DELETE',
-    headers: {
-      'X-CSRFToken': getCsrfToken(), // Include CSRF token in the request header
+export const fetchJournalEntries = createAsyncThunk(
+  'journal/fetchJournalEntries',
+  async (_, { getState }) => {
+    const { token, id } = getState().auth; // Destructure to get token and user ID from auth state
+    const response = await fetch('/api/journal/', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'X-User-ID': id,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
-  });
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
+    return await response.json();
   }
-  return id; // Return the id of the deleted entry to remove it from the state
-});
+);
+
+export const addJournalEntry = createAsyncThunk(
+  'journal/addJournalEntry',
+  async (newEntry, { getState }) => {
+    const { token, id } = getState().auth;
+    const response = await fetch('/api/journal/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken(),
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ...newEntry, user_id: id })
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return await response.json();
+  }
+);
+
+export const editJournalEntry = createAsyncThunk(
+  'journal/editJournalEntry',
+  async ({ id, updatedEntry }, { getState }) => {
+    const token = getState().auth.token;
+    const response = await fetch(`/api/journal/${id}/`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken(),
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedEntry)
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return await response.json(); // Assuming your server responds with the updated entry
+  }
+);
+
+export const deleteJournalEntry = createAsyncThunk(
+  'journal/deleteJournalEntry',
+  async (id, { getState }) => {
+    const token = getState().auth.token;
+    const response = await fetch(`/api/journal/${id}/`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRFToken': getCsrfToken(),
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return id;
+  }
+);
 
 const journalSlice = createSlice({
   name: 'journal',

@@ -1,35 +1,45 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { fetchJournalEntries } from '../reducers/journalSlice';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { fetchJournalEntries } from '../reducers/journalSlice';
+import { selectToken, clearToken } from '../reducers/authSlice';
 import JournalEntrySummary from '../components/JournalEntrySummary';
 import './JournalListPage.styles.css';
-import { isLoggedIn, parseTokenFromUrl, redirectToLogin, logout } from '../services/authService';
+import { parseTokenFromUrl, redirectToLogin, logout, saveTokenToState, saveIdToState } from '../services/authService';
+import { jwtDecode } from 'jwt-decode';
 
-const JournalListPage = ({ entries, getEntries }) => {
+const JournalListPage = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const entries = useSelector((state) => state.journal.entries);
+  const [tokenProcessed, setTokenProcessed] = useState(false); // State to track if the token has been processed
+  const token = useSelector(selectToken);
 
   useEffect(() => {
-    // Check if the user is logged in
-    if (!isLoggedIn()) {
-      redirectToLogin(); // Redirect to Cognito login page if not logged in
-    } else {
-      getEntries(); // Fetch journal entries if logged in
-    }
-  }, [getEntries]);
-
-  useEffect(() => {
-    // Parse the token from the URL if present and save it
-    const token = parseTokenFromUrl();
-    if (token) {
-      localStorage.setItem('idToken', token); // Save the token in local storage
-      navigate('/'); // Navigate to the home page
+    const urlToken = parseTokenFromUrl(); // Attempt to retrieve the token from the URL first
+    if (!token && !urlToken) { // If there's no token in either Redux state or URL, redirect to login
+      redirectToLogin();
+    } else if (urlToken) {
+      const decoded = jwtDecode(urlToken);
+      const userId = decoded?.sub;
+      dispatch(saveIdToState(userId));
+      dispatch(saveTokenToState(urlToken)); // Save the token from URL to Redux state
       window.location.hash = ''; // Clear the hash from the URL
+      setTokenProcessed(true);
+    } else if (token) {
+      setTokenProcessed(true); // If there's already a token in the Redux state, proceed
     }
-  }, []);
+  }, [dispatch, navigate, token]);
+
+  useEffect(() => {
+    if (tokenProcessed) {
+      dispatch(fetchJournalEntries()); // Fetch journal entries once the token is processed
+    }
+  }, [dispatch, tokenProcessed]); // Depend on tokenProcessed to trigger journal entries fetching
 
   const handleLogout = () => {
     logout();
+    dispatch(clearToken());
   };
 
   return (
@@ -50,12 +60,4 @@ const JournalListPage = ({ entries, getEntries }) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  entries: state.journal.entries,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  getEntries: () => dispatch(fetchJournalEntries()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(JournalListPage);
+export default JournalListPage;

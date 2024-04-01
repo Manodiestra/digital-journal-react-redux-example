@@ -1,11 +1,14 @@
 import UserPool, { CognitoDomain } from "./cognitoConfig";
+import { setToken, setId } from "../reducers/authSlice";
 
 const yourAppDomain = 'http://localhost:8080/';
 
-// Function to check if the user is logged in
-export const isLoggedIn = () => {
-  const token = localStorage.getItem('idToken');
-  return !!token; // Convert the existence of a token to a boolean
+export const saveTokenToState = (token) => (dispatch) => {
+  dispatch(setToken(token)); // Assuming setToken is an action in your Redux slice that saves the token
+};
+
+export const saveIdToState = (id) => (dispatch) => {
+  dispatch(setId(id));
 };
 
 // Function to parse the hash from the URL and extract the ID token
@@ -32,8 +35,6 @@ export const redirectToLogin = () => {
 };
 
 export const logout = () => {
-  localStorage.removeItem('idToken');
-
   const domain = CognitoDomain;
   const clientId = UserPool.getClientId();
   const logoutUri = encodeURIComponent(yourAppDomain);
