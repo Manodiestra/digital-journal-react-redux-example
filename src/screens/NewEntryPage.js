@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { addJournalEntry } from '../reducers/journalSlice';
-import { Link, useLocation } from 'react-router-dom'; // Import useLocation
-import './NewEntryPage.styles.css'; // Import external stylesheet
+import { Link, useLocation } from 'react-router-dom';
+import { Container, TextField, Button, Box, Typography } from '@mui/material';
+import { Link as MuiLink } from '@mui/material';
 
 const NewEntryPage = ({ addJournalEntry }) => {
   const location = useLocation(); // Initialize useLocation hook to access location object
@@ -56,44 +57,54 @@ const NewEntryPage = ({ addJournalEntry }) => {
   };
 
   return (
-    <div className="container">
-      <h1>New Entry</h1>
-      <div className="navigation">
-        <Link to="/" className="button">Go to List View</Link>
-        <Link to="/calendar" className="button">Go to Calendar</Link>
-        <Link to="/new-entry" className="button">Go to New Entry</Link>
-      </div>
-      <div className="form-group">
-        <label className="label">Title:</label>
-        <input
-          type="text"
-          placeholder="Enter title"
+    <Container maxWidth="sm">
+      <Typography variant="h4" gutterBottom>New Entry</Typography>
+      <Box display="flex" justifyContent="space-between" mb={2}>
+        <MuiLink component={Link} to="/" underline="none">
+          <Button variant="contained">Go to List View</Button>
+        </MuiLink>
+        <MuiLink component={Link} to="/calendar" underline="none">
+          <Button variant="contained">Go to Calendar</Button>
+        </MuiLink>
+        <MuiLink component={Link} to="/new-entry" underline="none">
+          <Button variant="contained">Go to New Entry</Button>
+        </MuiLink>
+      </Box>
+      <Box mb={2}>
+        <TextField
+          fullWidth
+          label="Title"
+          variant="outlined"
           value={title}
-          onChange={handleTitleChange}
-          className="input"
+          onChange={e => setTitle(e.target.value)}
         />
-      </div>
-      <div className="form-group">
-        <label className="label">Date and Time:</label>
-        <input
+      </Box>
+      <Box mb={2}>
+        <TextField
+          fullWidth
           type="datetime-local"
+          label="Date and Time"
+          InputLabelProps={{ shrink: true }}
+          variant="outlined"
           value={dateTime}
-          onChange={handleDateTimeChange}
-          className="input"
+          onChange={e => setDateTime(e.target.value)}
         />
-      </div>
-      <div className="form-group">
-        <label className="label">Journal Entry:</label>
-        <textarea
-          placeholder="Enter your journal entry here"
-          value={content}
-          onChange={handleContentChange}
+      </Box>
+      <Box mb={2}>
+        <TextField
+          fullWidth
+          label="Journal Entry"
+          multiline
           rows={6}
-          className="textarea"
+          variant="outlined"
+          value={content}
+          onChange={e => setContent(e.target.value)}
         />
-      </div>
-      <button onClick={handleSubmit} className="button">Submit Entry</button>
-    </div>
+      </Box>
+      <Button variant="contained" color="primary" onClick={handleSubmit}>
+        Submit Entry
+      </Button>
+    </Container>
   );
 };
 
