@@ -1,7 +1,7 @@
 import React from 'react';
-import { useDispatch } from 'react-redux'; 
+import { useDispatch } from 'react-redux';
 import { deleteJournalEntry } from '../reducers/journalSlice';
-import './JournalEntrySummary.styles.css'; 
+import { Card, CardContent, Typography, Button } from '@mui/material';
 
 const JournalEntrySummary = ({ entry }) => {
   const dispatch = useDispatch(); // Initialize the useDispatch hook
@@ -25,12 +25,22 @@ const JournalEntrySummary = ({ entry }) => {
   };
 
   return (
-    <div className="entry-summary">
-      <div className="entry-title">{entry.title}</div>
-      <div className="entry-date">Date: {new Date(entry.dateTime).toLocaleString()}</div>
-      <div className="entry-body">{shortenContent(entry.content)}</div>
-      <button onClick={handleDeleteClick} className="delete-button">Delete</button> {/* Add delete button */}
-    </div>
+    <Card sx={{ marginBottom: '10px' }}>
+      <CardContent>
+        <Typography variant="h6" component="div">
+          {entry.title}
+        </Typography>
+        <Typography sx={{ fontSize: 14, marginTop: '5px' }} color="text.secondary" gutterBottom>
+          Date: {new Date(entry.dateTime).toLocaleString()}
+        </Typography>
+        <Typography variant="body2" sx={{ marginTop: '10px' }}>
+          {shortenContent(entry.content)}
+        </Typography>
+        <Button onClick={handleDeleteClick} sx={{ marginTop: '10px' }} variant="outlined" color="error">
+          Delete
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 
