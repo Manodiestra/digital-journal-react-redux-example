@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { fetchJournalEntries } from '../reducers/journalSlice';
 import { selectToken, clearToken } from '../reducers/authSlice';
 import JournalEntrySummary from '../components/JournalEntrySummary';
-import './JournalListPage.styles.css';
 import { parseTokenFromUrl, redirectToLogin, logout, saveTokenToState, saveIdToState } from '../services/authService';
 import { jwtDecode } from 'jwt-decode';
+import { Container, Button, Typography, Grid, Link } from '@mui/material';
 
 const JournalListPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const entries = useSelector((state) => state.journal.entries);
-  const [tokenProcessed, setTokenProcessed] = useState(false); // State to track if the token has been processed
+  const [tokenProcessed, setTokenProcessed] = useState(false);
   const token = useSelector(selectToken);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const JournalListPage = () => {
     if (tokenProcessed) {
       dispatch(fetchJournalEntries()); // Fetch journal entries once the token is processed
     }
-  }, [dispatch, tokenProcessed]); // Depend on tokenProcessed to trigger journal entries fetching
+  }, [dispatch, tokenProcessed]);
 
   const handleLogout = () => {
     logout();
@@ -43,20 +43,38 @@ const JournalListPage = () => {
   };
 
   return (
-    <div className="container">
-      <h1>Journal Entries</h1>
-      <div className="navigation">
-        <Link to="/" className="button">Go to List View</Link>
-        <Link to="/calendar" className="button">Go to Calendar</Link>
-        <Link to="/new-entry" className="button">Go to New Entry</Link>
-        <button onClick={handleLogout} className="button">Logout</button>
-      </div>
-      <div className="entries-list">
+    <Container maxWidth="sm" sx={{ padding: '20px', height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Typography variant="h4" gutterBottom>
+        Journal Entries
+      </Typography>
+      <Grid container spacing={2} sx={{ marginBottom: '20px' }}>
+        <Grid item>
+          <Button component={RouterLink} to="/" variant="contained" color="primary">
+            Go to List View
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button component={RouterLink} to="/calendar" variant="contained" color="primary">
+            Go to Calendar
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button component={RouterLink} to="/new-entry" variant="contained" color="primary">
+            Go to New Entry
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button onClick={handleLogout} variant="contained" color="secondary">
+            Logout
+          </Button>
+        </Grid>
+      </Grid>
+      <div>
         {entries.map(entry => (
           <JournalEntrySummary key={entry.id} entry={entry} />
         ))}
       </div>
-    </div>
+    </Container>
   );
 };
 
