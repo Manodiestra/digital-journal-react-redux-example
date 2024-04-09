@@ -74,12 +74,13 @@ export const editJournalEntry = createAsyncThunk(
 export const deleteJournalEntry = createAsyncThunk(
   'journal/deleteJournalEntry',
   async (id, { getState }) => {
-    const token = getState().auth.token;
+    const { token, id: user_id } = getState().auth;
     const response = await fetch(`/api/journal/${id}/`, {
       method: 'DELETE',
       headers: {
         'X-CSRFToken': getCsrfToken(),
         'Authorization': `Bearer ${token}`,
+        'X-User-ID': user_id,
       }
     });
     if (!response.ok) {
